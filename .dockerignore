@@ -1,0 +1,10 @@
+**/node_modules
+**/dist
+**/data
+**/.env
+**/*.db*
+eloheaven-be
+eloheaven-fe
+.git
+.claude
+*.log

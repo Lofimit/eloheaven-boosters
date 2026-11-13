@@ -1,0 +1,23 @@
+# Used by Coolify ("Docker Compose" build pack) or `docker compose up -d` on any VPS.
+services:
+  eloheaven:
+    build: .
+    restart: unless-stopped
+    environment:
+      - PUBLIC_URL=${PUBLIC_URL:?set PUBLIC_URL, e.g. https://eloheaven.pw}
+      - APP_SECRET=${APP_SECRET:?set APP_SECRET (openssl rand -hex 32)}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID:-}
+      - DISCORD_CLIENT_SECRET=${DISCORD_CLIENT_SECRET:-}
+      - OWNER_DISCORD_IDS=${OWNER_DISCORD_IDS:-}
+      - RIOT_API_KEY=${RIOT_API_KEY:-}
+      - EXTRA_ORIGINS=${EXTRA_ORIGINS:-}
+    volumes:
+      - eloheaven-data:/data
+    expose:
+      - "3000"
+    # Small community site: these limits are plenty and protect the VPS.
+    mem_limit: 384m
+    cpus: 1.0
+
+volumes:
+  eloheaven-data:
