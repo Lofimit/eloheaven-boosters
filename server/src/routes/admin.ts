@@ -9,7 +9,7 @@ import { decrypt, encrypt, newClientKey } from "../lib/crypto.js";
 import { badRequest, conflict, forbidden, jsonObject, notFound, parse } from "../lib/http.js";
 import { normalizeServer, POOLS, ROLES, roleRank, SERVER_CODES, type Role } from "../lib/league.js";
 import { getUser, selfUser, USERNAME_RE, type UserRow } from "../lib/users.js";
-import { keyStatus } from "../riot/api.js";
+import { checkKey, keyStatus } from "../riot/api.js";
 import { refreshAll, refreshStatus, syncAccount } from "../riot/sync.js";
 import { getSettings, settingsSchema, updateSettings } from "../settings.js";
 
@@ -492,9 +492,13 @@ export default async function adminRoutes(app: FastifyInstance) {
     const patch = parse(settingsSchema.partial(), req.body);
     // The masked key is echoed back by the form; only store real changes.
     if (patch.riotApiKey !== undefined && patch.riotApiKey.includes("…")) delete patch.riotApiKey;
+    const keyChanged = patch.riotApiKey !== undefined && patch.riotApiKey.trim() !== getSettings().riotApiKey;
+    if (patch.riotApiKey !== undefined) patch.riotApiKey = patch.riotApiKey.trim();
     const s = updateSettings(patch);
     logActivity(req, "admin.settings_updated", { details: { keys: Object.keys(patch) } });
-    return { settings: { ...s, riotApiKey: maskKey(s.riotApiKey) } };
+    // Re-test immediately so the status shown in the panel matches the new key.
+    const riotKey = keyChanged ? await checkKey() : keyStatus();
+    return { settings: { ...s, riotApiKey: maskKey(s.riotApiKey) }, riotKey };
   });
 
   app.post("/api/admin/backup", async (req, reply) => {

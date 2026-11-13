@@ -3,6 +3,7 @@ import { logActivity } from "./lib/activity.js";
 import { refreshRecentAvatars } from "./lib/discord.js";
 import { getDDragon } from "./riot/ddragon.js";
 import { refreshAll, refreshInGame, refreshStatus } from "./riot/sync.js";
+import { checkKey } from "./riot/api.js";
 import { getSettings, riotApiKey } from "./settings.js";
 
 /**
@@ -65,6 +66,7 @@ export function startJobs() {
   }, "rank refresh");
 
   void getDDragon();
+  void checkKey().catch(() => {});
   housekeeping();
 }
 

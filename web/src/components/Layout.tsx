@@ -45,9 +45,7 @@ export function Logo({ className = "" }: { className?: string }) {
   return (
     <span className={cx("flex items-center gap-2.5", className)}>
       <img src="/images/logo.webp" alt="" className="size-9 drop-shadow-[0_0_12px_rgb(244_170_255_/_0.45)]" />
-      <span className="font-display text-xl font-bold tracking-tight">
-        Elo<span className="text-gradient">Heaven</span>
-      </span>
+      <span className="font-display text-xl font-bold tracking-tight text-white">EloHeaven</span>
     </span>
   );
 }

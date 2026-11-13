@@ -61,6 +61,23 @@ async function riotGet<T>(host: string, path: string, attempt = 0): Promise<T | 
   return (await res.json()) as T;
 }
 
+/** Test the configured key with a cheap call (startup / after the key changes) so the admin status is accurate. */
+export async function checkKey(): Promise<KeyStatus> {
+  if (!riotApiKey()) {
+    state.set("riotKeyStatus", { ok: false, message: "No Riot API key configured. Set RIOT_API_KEY or add one in Admin → Settings.", checkedAt: Date.now() });
+  } else {
+    try {
+      await riotGet("euw1", "/lol/status/v4/platform-data");
+      setKeyStatus(true, "OK");
+    } catch (err) {
+      if (!(err instanceof RiotKeyError)) {
+        state.set("riotKeyStatus", { ok: false, message: `Couldn't reach Riot to test the key: ${(err as Error).message}`, checkedAt: Date.now() });
+      }
+    }
+  }
+  return keyStatus()!;
+}
+
 export interface RiotAccount {
   puuid: string;
   gameName?: string;

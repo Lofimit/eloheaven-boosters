@@ -3,9 +3,10 @@ import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 
+/** Reads an env var, ignoring surrounding whitespace and quotes (common when pasting into a hosting panel). */
 function str(name: string, fallback = ""): string {
-  const v = process.env[name];
-  return v === undefined || v === "" ? fallback : v;
+  const v = (process.env[name] ?? "").trim().replace(/^(["'])(.*)\1$/, "$2").trim();
+  return v === "" ? fallback : v;
 }
 
 function int(name: string, fallback: number): number {
