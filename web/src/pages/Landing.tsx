@@ -1,6 +1,6 @@
 import { Link, Navigate } from "react-router";
 import { ArrowRight, Clock, Lock, ShieldCheck, Sparkles, Trophy } from "lucide-react";
-import { Backdrop, Logo } from "../components/Layout";
+import { Backdrop, Footer, Logo } from "../components/Layout";
 import { useMe, useMeta, useTitle } from "../lib/hooks";
 import { PageLoader } from "../components/ui";
 
@@ -60,7 +60,7 @@ export default function Landing() {
           ))}
         </section>
       </main>
-      <footer className="pb-8 text-center text-xs text-muted/70">EloHeaven isn't endorsed by Riot Games.</footer>
+      <Footer />
     </>
   );
 }

@@ -21,9 +21,9 @@ const SORTS = [
   ["recent", "Newest"],
 ] as const;
 
-export default function Accounts({ poolOverride }: { poolOverride?: Pool }) {
+export default function Accounts() {
   const params = useParams();
-  const pool = (poolOverride ?? params.pool) as Pool;
+  const pool = params.pool as Pool;
   const { data: me } = useMe();
   const meta = useMeta();
   const { champions } = useChampions();

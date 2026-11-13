@@ -58,10 +58,6 @@ const router = createBrowserRouter([
       { path: "/rules", element: s(<Rules />) },
       { path: "/help", element: s(<Help />) },
       { path: "/admin/*", element: <RequireStaff>{s(<Admin />)}</RequireStaff> },
-      // legacy URLs from the old site
-      { path: "/league-accounts", element: <Accounts poolOverride="booster" /> },
-      { path: "/community-accounts", element: <Accounts poolOverride="community" /> },
-      { path: "/profile/:id?", element: s(<Profile />) },
       { path: "*", element: <NotFound /> },
     ],
   },

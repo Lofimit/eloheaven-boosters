@@ -8,8 +8,7 @@
     "build": "tsc -p tsconfig.json",
     "start": "node dist/index.js",
     "typecheck": "tsc --noEmit -p tsconfig.json",
-    "cli": "tsx --env-file-if-exists=../.env src/cli.ts",
-    "import-legacy": "tsx --env-file-if-exists=../.env src/scripts/import-legacy.ts"
+    "cli": "tsx --env-file-if-exists=../.env src/cli.ts"
   },
   "dependencies": {
     "@fastify/compress": "^9.3.0",
@@ -18,7 +17,6 @@
     "@fastify/rate-limit": "^11.2.2",
     "@fastify/static": "^10.1.10",
     "fastify": "^5.12.8",
-    "mysql2": "^3.24.6",
     "zod": "^4.6.7"
   },
   "devDependencies": {

@@ -21,12 +21,10 @@ export const SERVERS = {
 export type ServerCode = keyof typeof SERVERS;
 export const SERVER_CODES = Object.keys(SERVERS) as ServerCode[];
 
-/** Accepts legacy spellings like "EUW", "oc", "la1". */
+/** Validates a server code case-insensitively ("EUW" -> "euw"). */
 export function normalizeServer(input: string | null | undefined): ServerCode | null {
   const s = (input ?? "").trim().toLowerCase();
-  const aliases: Record<string, ServerCode> = { oc: "oce", oc1: "oce", la1: "lan", la2: "las", me1: "me", eun1: "eune", euw1: "euw", na1: "na", br1: "br", jp1: "jp", tr1: "tr", sg2: "sg", tw2: "tw", vn2: "vn" };
-  if (s in SERVERS) return s as ServerCode;
-  return aliases[s] ?? null;
+  return s in SERVERS ? (s as ServerCode) : null;
 }
 
 export const TIERS = ["IRON", "BRONZE", "SILVER", "GOLD", "PLATINUM", "EMERALD", "DIAMOND", "MASTER", "GRANDMASTER", "CHALLENGER"] as const;
@@ -45,16 +43,6 @@ export function rankScore(tier: string | null | undefined, division: string | nu
 
 /** Lower-bound score for "tier or above" filtering. */
 export const tierFloor = (tier: Tier) => (TIERS.indexOf(tier) + 1) * 1000;
-
-/** Parses legacy strings like "GOLD II (23 LP)" or "Unranked (0 LP)". */
-export function parseLegacyRank(s: string | null | undefined): { tier: string | null; division: string | null; lp: number } {
-  const m = /^\s*([A-Za-z]+)\s*([IV]+)?\s*(?:\((\d+)\s*LP\))?/.exec(s ?? "");
-  if (!m) return { tier: null, division: null, lp: 0 };
-  const tier = m[1]!.toUpperCase();
-  if (!TIERS.includes(tier as Tier)) return { tier: null, division: null, lp: 0 };
-  const apex = TIERS.indexOf(tier as Tier) >= 7;
-  return { tier, division: apex ? null : (m[2]?.toUpperCase() ?? null), lp: Number(m[3] ?? 0) };
-}
 
 export const ROLES = ["owner", "admin", "moderator", "booster", "customer"] as const;
 export type Role = (typeof ROLES)[number];

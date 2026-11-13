@@ -10,7 +10,6 @@ EloHeaven/
 ├─ Dockerfile       multi-stage build -> single ~290 MB image, ~55 MB RAM at idle
 ├─ docker-compose.yml
 ├─ DEPLOY.md        step-by-step Coolify guide
-└─ eloheaven-be/, eloheaven-fe/   the old v1 code (only needed for the data import; safe to delete after)
 ```
 
 ## Why this stack
@@ -32,7 +31,7 @@ EloHeaven/
 - **Legacy client tokens (optional):** tried once per account for BE/RP/refunds/champions/bans. Riot deprecated this flow, so failures are marked `invalid` and never retried. BE/RP/champions can be entered by hand in the admin panel.
 - **Lend an account:** members submit logins (encrypted immediately). Staff review, then approve into a pool or reject with a reason.
 - **Security:** AES-256-GCM encrypted credentials at rest, strict CSP, Origin check on every mutation, rate limits, zod validation on all inputs, XSS-safe captcha page.
-- **Desktop client compatibility:** `POST /community/userkey`, `POST /community/currentaccountused` and `GET /community/captcha` keep their old paths and response shapes. Old client keys are kept by the importer.
+- **Desktop client compatibility:** `POST /community/userkey`, `POST /community/currentaccountused` and `GET /community/captcha` keep their old paths and response shapes.
 - **UI:** dark anime theme (your wallpaper, sakura→sky gradients, glass panels, drifting petals), responsive down to phones, plus user preferences for custom wallpaper, compact mode and reduced motion.
 
 ## Local development
@@ -50,12 +49,3 @@ cd server && npm run cli -- create-owner yourname "a-strong-password"
 ```
 
 Other CLI commands: `promote <user> <role>`, `set-password <user> <pw>`, `users`.
-
-## Importing the old MySQL data
-
-```bash
-cd server
-LEGACY_DATABASE_URL="mysql://USER:PASS@HOST:3306/DBNAME" npm run import-legacy
-```
-
-This keeps user and account IDs, Discord links, roles, trust, bios, ranks, BE/RP, champions (names mapped to IDs), subscriptions and client keys, pending reviews and logs. Logins are encrypted with your `APP_SECRET` during the import. See **DEPLOY.md** for running it on the server.

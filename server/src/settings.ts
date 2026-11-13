@@ -27,7 +27,7 @@ export type Settings = z.infer<typeof settingsSchema>;
 const defaults: Settings = {
   siteName: "EloHeaven",
   announcement: "",
-  discordInvite: "https://discord.gg/eloheaven",
+  discordInvite: "https://discord.gg/kingsz",
   allowPasswordRegistration: true,
   leaseHours: 3,
   maxHoldHours: 8,

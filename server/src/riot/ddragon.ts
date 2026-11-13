@@ -42,11 +42,9 @@ async function refresh(): Promise<Cache | null> {
   }
 }
 
-let byKey = new Map<number, Champion>();
 let byName = new Map<string, Champion>();
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
 function rebuildIndex() {
-  byKey = new Map(cache?.champions.map((c) => [c.key, c]) ?? []);
   byName = new Map();
   for (const c of cache?.champions ?? []) {
     byName.set(norm(c.name), c);
@@ -62,6 +60,4 @@ export async function getDDragon(): Promise<Cache | null> {
   return cache ?? (await inflight);
 }
 
-export const championByKey = (key: number) => byKey.get(key);
 export const championByName = (name: string) => byName.get(norm(name));
-export const ddragonVersion = () => cache?.version ?? "15.1.1";

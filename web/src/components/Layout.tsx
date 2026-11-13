@@ -177,10 +177,18 @@ export function AppLayout() {
       <main className="mx-auto w-full max-w-7xl px-4 py-8">
         <Outlet />
       </main>
-      <footer className="mx-auto max-w-7xl px-4 pb-8 text-center text-xs text-muted/70">
-        EloHeaven isn't endorsed by Riot Games. League of Legends © Riot Games, Inc.
-      </footer>
+      <Footer />
     </>
+  );
+}
+
+export function Footer() {
+  return (
+    <footer className="px-4 pb-8 text-center text-xs text-muted/70">
+      <a href="https://discord.gg/kingsz" target="_blank" rel="noreferrer" className="inline-flex items-center gap-1.5 hover:text-sakura">
+        <MessageCircle className="size-3.5" /> discord.gg/kingsz
+      </a>
+    </footer>
   );
 }
 
