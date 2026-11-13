@@ -25,7 +25,7 @@ export default function Profile() {
         <div className="h-28 bg-gradient-to-r from-sakura/30 via-violet/20 to-sky/30" />
         <div className="px-6 pb-6">
           <div className="-mt-12 flex flex-wrap items-end justify-between gap-4">
-            <Avatar src={u.avatarUrl} name={u.username} size="size-24" className="border-4 border-panel text-3xl" />
+            <Avatar src={u.avatarUrl} name={u.username} userId={u.id} size="size-24" className="border-4 border-panel text-3xl" />
             {isMe && <Link to="/settings" className="btn btn-ghost btn-sm"><Pencil className="size-3.5" /> Edit profile</Link>}
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-2">

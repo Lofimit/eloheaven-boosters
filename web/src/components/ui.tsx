@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import { Check, ChevronLeft, ChevronRight, Copy, Eye, EyeOff, Loader2, X } from "lucide-react";
+import { api } from "../lib/api";
 import { ROLE_LABEL, ROLE_STYLE } from "../lib/format";
 import type { Role } from "../lib/types";
 
@@ -49,16 +50,37 @@ export function RoleBadge({ role }: { role: Role }) {
   return <span className={cx("inline-flex items-center rounded-full border px-2 py-0.5 text-[11px] font-semibold", ROLE_STYLE[role])}>{ROLE_LABEL[role]}</span>;
 }
 
-export function Avatar({ src, name, size = "size-10", className }: { src?: string | null; name: string; size?: string; className?: string }) {
+// Users whose avatar we already asked the server to refresh this page load (avoid loops).
+const avatarRefreshTried = new Set<number>();
+
+export function Avatar({ src, name, userId, size = "size-10", className }: { src?: string | null; name: string; userId?: number; size?: string; className?: string }) {
+  const [override, setOverride] = useState<string | null>(null);
   const [broken, setBroken] = useState(false);
-  if (!src || broken) {
+  const current = override ?? src;
+  useEffect(() => {
+    setOverride(null);
+    setBroken(false);
+  }, [src]);
+  const onError = () => {
+    // Discord avatar URLs die when the user changes their picture; ask the server for the new one once.
+    if (userId && !avatarRefreshTried.has(userId) && current?.includes("discordapp")) {
+      avatarRefreshTried.add(userId);
+      api
+        .post<{ avatarUrl: string | null }>(`/api/users/${userId}/avatar`)
+        .then((r) => (r.avatarUrl && r.avatarUrl !== current ? setOverride(r.avatarUrl) : setBroken(true)))
+        .catch(() => setBroken(true));
+      return;
+    }
+    setBroken(true);
+  };
+  if (!current || broken) {
     return (
       <div className={cx(size, "grid shrink-0 place-items-center rounded-full bg-gradient-to-br from-sakura/40 to-sky/40 font-display font-bold text-ink", className)}>
         {name.charAt(0).toUpperCase()}
       </div>
     );
   }
-  return <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} className={cx(size, "shrink-0 rounded-full object-cover", className)} />;
+  return <img src={current} alt="" loading="lazy" referrerPolicy="no-referrer" onError={onError} className={cx(size, "shrink-0 rounded-full object-cover", className)} />;
 }
 
 export function Bar({ value, className }: { value: number; className?: string }) {

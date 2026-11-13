@@ -6,6 +6,7 @@ import { createSession, destroySession, hasActiveSubscription, poolAccess } from
 import { logActivity } from "../lib/activity.js";
 import { hashPassword, randomToken, verifyPassword } from "../lib/crypto.js";
 import { badRequest, conflict, HttpError, parse } from "../lib/http.js";
+import { discordAvatarUrl } from "../lib/discord.js";
 import { createUser, getUser, selfUser, uniqueUsername, USERNAME_RE, type UserRow } from "../lib/users.js";
 import { getSettings } from "../settings.js";
 
@@ -17,10 +18,6 @@ const credentials = z.object({
   password: z.string().min(8, "Password must be at least 8 characters").max(200),
 });
 
-function discordAvatar(id: string, avatar: string | null): string {
-  if (!avatar) return `https://cdn.discordapp.com/embed/avatars/${Number((BigInt(id) >> 22n) % 6n)}.png`;
-  return `https://cdn.discordapp.com/avatars/${id}/${avatar}.${avatar.startsWith("a_") ? "gif" : "png"}?size=128`;
-}
 
 export default async function authRoutes(app: FastifyInstance) {
   app.get("/api/auth/me", async (req) => {
@@ -113,7 +110,7 @@ export default async function authRoutes(app: FastifyInstance) {
       return fail("Discord is not responding, try again in a moment");
     }
 
-    const avatar = discordAvatar(profile.id, profile.avatar);
+    const avatar = discordAvatarUrl(profile.id, profile.avatar);
     const isOwner = config.ownerDiscordIds.includes(profile.id);
     const existing = q.get<UserRow>("SELECT * FROM users WHERE discord_id = ?", [profile.id]);
 

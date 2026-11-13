@@ -77,13 +77,13 @@ function UserMenu() {
   return (
     <div className="relative" ref={ref}>
       <button onClick={() => setOpen((o) => !o)} className="flex items-center gap-2 rounded-full border border-line bg-white/[0.03] py-1 pr-2.5 pl-1 hover:border-sakura/30" aria-expanded={open}>
-        <Avatar src={u.avatarUrl} name={u.username} size="size-8" />
+        <Avatar src={u.avatarUrl} name={u.username} userId={u.id} size="size-8" />
         <ChevronDown className={cx("size-4 text-muted transition", open && "rotate-180")} />
       </button>
       {open && (
         <div className="glass absolute right-0 mt-2 w-64 bg-panel/95 p-2 animate-pop">
           <div className="flex items-center gap-3 border-b border-line px-2 pt-1 pb-3">
-            <Avatar src={u.avatarUrl} name={u.username} size="size-11" />
+            <Avatar src={u.avatarUrl} name={u.username} userId={u.id} size="size-11" />
             <div className="min-w-0">
               <p className="truncate font-semibold">{u.username}</p>
               <RoleBadge role={u.role} />

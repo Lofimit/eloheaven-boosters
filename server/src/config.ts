@@ -35,6 +35,8 @@ export const config = {
     clientId: str("DISCORD_CLIENT_ID"),
     clientSecret: str("DISCORD_CLIENT_SECRET"),
     redirectUri: str("DISCORD_REDIRECT_URI", `${publicUrl}/api/auth/discord/callback`),
+    /** Optional: lets the server keep avatars fresh without the user logging in again. */
+    botToken: str("DISCORD_BOT_TOKEN"),
   },
   /** Discord user IDs that are always promoted to owner on login. */
   ownerDiscordIds: str("OWNER_DISCORD_IDS")

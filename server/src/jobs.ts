@@ -1,5 +1,6 @@
 import { housekeeping, q } from "./db.js";
 import { logActivity } from "./lib/activity.js";
+import { refreshRecentAvatars } from "./lib/discord.js";
 import { getDDragon } from "./riot/ddragon.js";
 import { refreshAll, refreshInGame, refreshStatus } from "./riot/sync.js";
 import { getSettings, riotApiKey } from "./settings.js";
@@ -52,6 +53,7 @@ export function startJobs() {
   every(60_000, expireLeases, "lease expiry");
   every(6 * 3600_000, housekeeping, "housekeeping");
   every(6 * 3600_000, getDDragon, "ddragon");
+  every(24 * 3600_000, refreshRecentAvatars, "avatar refresh");
   // Live-game check for held accounts (cheap: only accounts in use).
   every(5 * 60_000, () => riotApiKey() && refreshInGame(), "in-game check");
   // Full rank refresh; interval is read each tick so admin changes apply without restart.

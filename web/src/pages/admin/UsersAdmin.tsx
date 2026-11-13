@@ -65,7 +65,7 @@ export default function UsersAdmin() {
                 <tr key={u.id} className="cursor-pointer hover:bg-white/[0.03]" onClick={() => setOpen(u.id)}>
                   <td className="p-3">
                     <span className="flex items-center gap-2.5">
-                      <Avatar src={u.avatarUrl} name={u.username} size="size-8" />
+                      <Avatar src={u.avatarUrl} name={u.username} userId={u.id} size="size-8" />
                       <span className={cx("font-medium", u.banned && "text-bad line-through")}>{u.username}</span>
                       <span className="text-xs text-muted">#{u.id}</span>
                     </span>
@@ -136,7 +136,7 @@ function UserEditor({ id, onClose }: { id: number; onClose: () => void }) {
         <div className="grid gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <Avatar src={u.avatarUrl} name={u.username} size="size-14" />
+              <Avatar src={u.avatarUrl} name={u.username} userId={u.id} size="size-14" />
               <div className="text-xs text-muted">
                 <p>Joined {fmtDate(u.createdAt)} · seen {timeAgo(u.lastSeenAt)}</p>
                 <p>Discord: {u.discordId ?? "not linked"} · password: {u.hasPassword ? "yes" : "no"}</p>

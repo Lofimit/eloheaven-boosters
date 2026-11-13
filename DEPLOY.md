@@ -37,6 +37,7 @@ In the app's **Environment Variables** tab:
 | `PUBLIC_URL` | ✅ | `https://eloheaven.pw` |
 | `APP_SECRET` | ✅ | output of `openssl rand -hex 32`. **Store it in your password manager.** It encrypts all account logins, and if you lose or change it they can't be decrypted. |
 | `DISCORD_CLIENT_ID` / `DISCORD_CLIENT_SECRET` | for Discord login | from the Discord developer portal |
+| `DISCORD_BOT_TOKEN` | recommended | Discord developer portal → same app → **Bot** → Reset Token. Keeps profile pictures fresh when people change them (the bot never joins a server). Without it, avatars only update on each Discord login. |
 | `OWNER_DISCORD_IDS` | optional | your Discord user ID, which makes you owner on login |
 | `RIOT_API_KEY` | optional | can also be set in Admin → Settings |
 | `EXTRA_ORIGINS` | optional | e.g. `https://www.eloheaven.pw` if you serve that too |

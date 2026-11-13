@@ -39,7 +39,7 @@ export default function Members() {
         <div className={cx("grid gap-3 sm:grid-cols-2 lg:grid-cols-3", res.isPlaceholderData && "opacity-60")}>
           {res.data?.items.map((u, i) => (
             <Link key={u.id} to={`/u/${u.id}`} className="glass glass-hover flex items-center gap-3 p-4 animate-fade-up" style={{ animationDelay: `${Math.min(i, 12) * 25}ms` }}>
-              <Avatar src={u.avatarUrl} name={u.username} size="size-12" />
+              <Avatar src={u.avatarUrl} name={u.username} userId={u.id} size="size-12" />
               <div className="min-w-0 flex-1">
                 <p className={cx("truncate font-semibold", u.banned && "line-through opacity-60")}>{u.username}</p>
                 <p className="text-xs text-muted">seen {timeAgo(u.lastSeenAt)}</p>

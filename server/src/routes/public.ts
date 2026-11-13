@@ -3,6 +3,7 @@ import { z } from "zod";
 import { discordEnabled } from "../config.js";
 import { q } from "../db.js";
 import { requireUser } from "../auth.js";
+import { refreshAvatar } from "../lib/discord.js";
 import { notFound, parse } from "../lib/http.js";
 import { ROLES, SERVERS } from "../lib/league.js";
 import { getUser, publicUser, type UserRow } from "../lib/users.js";
@@ -56,6 +57,13 @@ export default async function publicRoutes(app: FastifyInstance) {
       [...params, pageSize, (f.page - 1) * pageSize],
     );
     return { items: rows.map(publicUser), total, page: f.page, pageSize };
+  });
+
+  /** Called by the browser when an avatar image fails to load (stale Discord hash). Throttled per user. */
+  app.post("/api/users/:id/avatar", { config: { rateLimit: { max: 30, timeWindow: "1 minute" } } }, async (req) => {
+    requireUser(req);
+    const { id } = parse(z.object({ id: z.coerce.number().int().positive() }), req.params);
+    return { avatarUrl: await refreshAvatar(id) };
   });
 
   app.get("/api/users/:id", async (req) => {
