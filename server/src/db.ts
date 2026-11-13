@@ -6,7 +6,45 @@ import { config } from "./config.js";
 fs.mkdirSync(config.dataDir, { recursive: true });
 
 export const dbFile = path.join(config.dataDir, "eloheaven.db");
+
+/**
+ * Is DATA_DIR on storage that survives redeploys? Inside Docker, a missing mount or an
+ * anonymous volume (64-hex name) means the database is thrown away with the container.
+ */
+export type StorageStatus = "persistent" | "anonymous" | "none" | "unknown";
+function detectStorage(): StorageStatus {
+  if (process.platform !== "linux") return "unknown";
+  try {
+    const dir = fs.realpathSync(config.dataDir);
+    let best: { mount: string; root: string } | null = null;
+    for (const line of fs.readFileSync("/proc/self/mountinfo", "utf8").split("\n")) {
+      const f = line.split(" ");
+      const root = f[3];
+      const mount = f[4]?.replace(/\\040/g, " ");
+      if (!root || !mount) continue;
+      if ((dir === mount || dir.startsWith(mount.endsWith("/") ? mount : mount + "/")) && (!best || mount.length > best.mount.length)) {
+        best = { mount, root };
+      }
+    }
+    if (!best || best.mount === "/") return "none";
+    const vol = /\/volumes\/([^/]+)\/_data/.exec(best.root)?.[1];
+    return vol && /^[0-9a-f]{64}$/.test(vol) ? "anonymous" : "persistent";
+  } catch {
+    return "unknown";
+  }
+}
+export const storageStatus = detectStorage();
+const isNewDb = !fs.existsSync(dbFile);
+
 export const db = new DatabaseSync(dbFile);
+
+if (storageStatus === "none" || storageStatus === "anonymous") {
+  console.error(
+    `\n[db] WARNING: ${config.dataDir} is ${storageStatus === "none" ? "not a mounted volume" : "an anonymous volume"}. ` +
+      `The database WILL BE LOST on the next deploy. Add persistent storage mounted at ${config.dataDir}.\n`,
+  );
+}
+console.log(`[db] ${isNewDb ? "created new" : "opened existing"} database at ${dbFile} (storage: ${storageStatus})`);
 
 db.exec(`
   PRAGMA journal_mode = WAL;

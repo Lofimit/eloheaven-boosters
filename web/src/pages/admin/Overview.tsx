@@ -17,6 +17,7 @@ interface OverviewData {
     refresh: { running: boolean; startedAt: number | null; finishedAt: number | null; done: number; total: number; failed: number; lastError: string | null };
     riotKey: { ok: boolean; message: string; checkedAt: number } | null;
     dbBytes: number;
+    storage: "persistent" | "anonymous" | "none" | "unknown";
     uptimeSec: number;
     memoryMb: number;
   };
@@ -54,6 +55,18 @@ export default function Overview() {
 
   return (
     <div className="space-y-6">
+      {(d.system.storage === "none" || d.system.storage === "anonymous") && (
+        <div className="glass flex items-start gap-3 border-bad/40 bg-bad/10 p-4 text-sm">
+          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-bad" />
+          <div>
+            <p className="font-semibold text-bad">The database is not on persistent storage</p>
+            <p className="text-muted">
+              Everything will be erased on the next deploy. In Coolify, open this app → <b>Persistent Storage</b> → add a volume with destination <code>/data</code>, then redeploy.
+              Download a backup from Settings first.
+            </p>
+          </div>
+        </div>
+      )}
       {!d.system.riotKey?.ok && (
         <div className="glass flex items-start gap-3 border-warn/30 bg-warn/5 p-4 text-sm">
           <AlertTriangle className="mt-0.5 size-5 shrink-0 text-warn" />

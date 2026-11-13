@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import { z } from "zod";
-import { db, dbFile, q, tx } from "../db.js";
+import { db, dbFile, q, storageStatus, tx } from "../db.js";
 import { requireRole, type SessionUser } from "../auth.js";
 import { ACCOUNT_COLUMNS, ACCOUNT_JOINS, releaseAccount, serializeAccount, type AccountRow } from "../lib/accounts.js";
 import { logActivity } from "../lib/activity.js";
@@ -96,7 +96,7 @@ export default async function adminRoutes(app: FastifyInstance) {
     return {
       accounts, users, activeSubscriptions: subs?.n ?? 0, pendingSubmissions: pending?.n ?? 0, claimsPerDay,
       inUse: inUse.map((a) => serializeAccount(a, viewer)),
-      system: { refresh: refreshStatus(), riotKey: keyStatus(), dbBytes, uptimeSec: Math.round(process.uptime()), memoryMb: Math.round(process.memoryUsage().rss / 1048576) },
+      system: { refresh: refreshStatus(), riotKey: keyStatus(), dbBytes, storage: storageStatus, uptimeSec: Math.round(process.uptime()), memoryMb: Math.round(process.memoryUsage().rss / 1048576) },
     };
   });
 
